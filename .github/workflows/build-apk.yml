@@ -31,7 +31,7 @@ jobs:
           java-version: '21'
 
       - name: Preparar Android SDK e NDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Instalar ferramentas Android
         run: |
