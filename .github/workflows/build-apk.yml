@@ -38,11 +38,12 @@ jobs:
           sdkmanager "platform-tools" "platforms;${ANDROID_PLATFORM}" "build-tools;36.0.0" "ndk;${ANDROID_NDK_VERSION}" "cmake;3.22.1"
           echo "ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}" >> "$GITHUB_ENV"
 
-      - name: Preparar Gradle
+            - name: Preparar Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.7.0'
-          - name: Instalar glslc
+
+      - name: Instalar glslc
         run: |
           sudo apt-get update
           sudo apt-get install -y glslc
