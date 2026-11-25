@@ -50,6 +50,7 @@ jobs:
         run: |
           bash libs/llama.kt/scripts/bootstrap.sh
           bash libs/llama.kt/scripts/build-opencl.sh
+          
       - name: Baixar e conferir o modelo que será embutido no APK
         run: bash scripts/download-model.sh
 
