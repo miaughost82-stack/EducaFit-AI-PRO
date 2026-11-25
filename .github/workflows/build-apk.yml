@@ -42,15 +42,16 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.7.0'
-      - name: Instalar glslc
+          - name: Instalar glslc
         run: |
           sudo apt-get update
           sudo apt-get install -y glslc
-            - name: Inicializar fontes do motor llama.cpp
+
+      - name: Inicializar fontes do motor llama.cpp
         run: |
           bash libs/llama.kt/scripts/bootstrap.sh
           bash libs/llama.kt/scripts/build-opencl.sh
-          
+
       - name: Baixar e conferir o modelo que será embutido no APK
         run: bash scripts/download-model.sh
 
