@@ -1,0 +1,62 @@
+name: Build EducaFit AI PRO APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+
+env:
+  ANDROID_NDK_VERSION: 27.2.12479018
+  ANDROID_PLATFORM: android-35
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Baixar o projeto
+        uses: actions/checkout@v4
+
+      - name: Baixar a biblioteca Android llama.kt
+        run: |
+          git clone --depth 1 https://github.com/tensai-app/llama.kt.git libs/llama.kt
+          git -C libs/llama.kt submodule update --init --recursive
+
+      - name: Preparar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Preparar Android SDK e NDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar ferramentas Android
+        run: |
+          sdkmanager "platform-tools" "platforms;${ANDROID_PLATFORM}" "build-tools;36.0.0" "ndk;${ANDROID_NDK_VERSION}" "cmake;3.22.1"
+          echo "ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}" >> "$GITHUB_ENV"
+
+      - name: Preparar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.7.0'
+
+      - name: Inicializar fontes do motor llama.cpp
+        run: |
+          bash libs/llama.kt/scripts/bootstrap.sh
+
+      - name: Baixar e conferir o modelo que será embutido no APK
+        run: bash scripts/download-model.sh
+
+      - name: Compilar APK com modelo local incluído
+        run: gradle --no-daemon :app:assembleDebug --stacktrace
+
+      - name: Publicar APK para baixar
+        uses: actions/upload-artifact@v4
+        with:
+          name: EducaFit-AI-PRO-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
